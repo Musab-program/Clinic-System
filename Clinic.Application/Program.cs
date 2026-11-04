@@ -1,13 +1,14 @@
-﻿using System.Text;
+﻿using Clinic.Api.Swagger;
 using Clinic.Application;
 using Clinic.Application.Common.Exceptions;
 using Clinic.Infrastructure;
+using Clinic.Infrastructure.Persistence;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Clinic.Api.Swagger;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -138,6 +139,12 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+
+if (app.Environment.IsDevelopment() )
+{
+    await using var seedScope = app.Services.CreateAsyncScope();
+    await DatabaseSeeder.SeedAsync(seedScope.ServiceProvider);
 }
 
 app.UseHttpsRedirection();
